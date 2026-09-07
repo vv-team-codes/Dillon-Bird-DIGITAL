@@ -239,9 +239,9 @@ function Index() {
             <p className="eyebrow rise">The technology practice of Dillon &amp; Bird Partners</p>
             <h1 className="rise">We build it, we run it, we stand behind it.</h1>
             <p className="lede rise">
-              We design, build and operate the technology that UAE businesses depend on —
-              regulatory readiness, cloud, applied AI and the operations beneath it all. Then we
-              stay accountable for how it performs.
+              We design, build and operate the technology that UAE businesses depend on — regulatory
+              readiness, cloud, applied AI and the operations beneath it all. Then we stay
+              accountable for how it performs.
             </p>
             <div className="btns rise">
               <a className="btn" href="#contact">
