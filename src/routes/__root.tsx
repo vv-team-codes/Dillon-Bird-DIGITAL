@@ -108,7 +108,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500&display=swap",
       },
-      { rel: "icon", type: "image/png", href: "/favicon.png" },
+         // No favicon: intentionally omitted to prevent any browser tab icon from appearing
     ],
   }),
   shellComponent: RootShell,
