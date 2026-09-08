@@ -195,17 +195,29 @@ const FAQS: Array<[string, string]> = [
 ];
 
 function Index() {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => {
+      setIsScrolled(window.scrollY > 30);
+    };
+
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
     <>
-      <header className="top">
+      <header className={`top ${isScrolled ? "top--hidden" : ""}`}>
         <div className="wrap">
-          <a className="mark" href="#top">
+          <a className={`mark ${isScrolled ? "mark--hidden" : ""}`} href="#top">
             <img src={dbLogo} alt="Dillon & Bird Digital logo" />
             <span className="mark-text">
               Dillon &amp; Bird<span>DIGITAL</span>
             </span>
           </a>
-          <nav className="topnav">
+          <nav className={`topnav ${isScrolled ? "topnav--hidden" : ""}`}>
             <a href="#services">Capabilities</a>
             <a href="#why">Why us</a>
             <a href="#how">How we engage</a>
