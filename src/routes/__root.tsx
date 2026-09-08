@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
+import brandIconUrl from "../../db-logo-transparent.png?url";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
@@ -108,7 +109,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500&display=swap",
       },
-         // No favicon: intentionally omitted to prevent any browser tab icon from appearing
+      { rel: "icon", type: "image/png", href: brandIconUrl },
+      { rel: "apple-touch-icon", href: brandIconUrl },
     ],
   }),
   shellComponent: RootShell,

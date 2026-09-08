@@ -2,9 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
 import "../site.css";
-import heroVideo from "@/assets/hero.mp4.asset.json";
-import heroPoster from "@/assets/hero-poster.jpg.asset.json";
-import dbLogo from "@/assets/db-logo-transparent.png.asset.json";
+import heroVideo from "../../hero.mp4";
+import dbLogo from "../../db-logo-transparent.png";
 
 const TITLE = "Dillon & Bird Digital";
 const DESCRIPTION =
@@ -201,7 +200,7 @@ function Index() {
       <header className="top">
         <div className="wrap">
           <a className="mark" href="#top">
-            <img src={dbLogo.url} alt="Dillon & Bird Digital logo" />
+            <img src={dbLogo} alt="Dillon & Bird Digital logo" />
             <span className="mark-text">
               Dillon &amp; Bird<span>DIGITAL</span>
             </span>
@@ -224,16 +223,10 @@ function Index() {
             loop
             playsInline
             preload="metadata"
-            poster={heroPoster.url}
             aria-hidden="true"
           >
-            <source src={heroVideo.url} type="video/mp4" />
+            <source src={heroVideo} type="video/mp4" />
           </video>
-          <div
-            className="still"
-            aria-hidden="true"
-            style={{ ["--hero-poster" as string]: `url('${heroPoster.url}')` }}
-          />
           <div className="wrap hero-in">
             <p className="eyebrow rise">
               The technology practice of Dillon &amp; Bird Partners
