@@ -1,26 +1,80 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+
+import "../site.css";
 import heroVideo from "@/assets/hero.mp4.asset.json";
 import heroPoster from "@/assets/hero-poster.jpg.asset.json";
+import dbLogo from "@/assets/db-logo-transparent.png.asset.json";
 
 const TITLE = "Dillon & Bird Digital";
-const DESCRIPTION = "Technology, AI, cloud and digital transformation solutions for UAE businesses.";
+const DESCRIPTION =
+  "Technology, AI, cloud and digital transformation solutions for UAE businesses.";
 
 export const Route = createFileRoute("/")({
+  component: Index,
   head: () => ({
     meta: [
       { title: TITLE },
       { name: "description", content: DESCRIPTION },
+      { name: "author", content: "Dillon and Bird Partners LLC-FZ" },
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESCRIPTION },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "/" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "/" }],
   }),
-  component: Index,
 });
 
-const capabilities = [
+function useCountdown(target: string) {
+  const calc = () => {
+    const diff = Math.max(0, new Date(target).getTime() - Date.now());
+    const days = Math.floor(diff / 86400000);
+    const hrs = Math.floor((diff % 86400000) / 3600000);
+    const min = Math.floor((diff % 3600000) / 60000);
+    const sec = Math.floor((diff % 60000) / 1000);
+    return { days, hrs, min, sec };
+  };
+  const [t, setT] = useState(calc);
+  useEffect(() => {
+    const id = setInterval(() => setT(calc()), 1000);
+    return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [target]);
+  return t;
+}
+
+function Tier({ label, target }: { label: string; target: string }) {
+  const { days, hrs, min, sec } = useCountdown(target);
+  const cells: Array<[number, string]> = [
+    [days, "DAYS"],
+    [hrs, "HRS"],
+    [min, "MIN"],
+    [sec, "SEC"],
+  ];
+  return (
+    <div className="tier">
+      <p className="lbl">{label}</p>
+      <div className="digits">
+        {cells.map(([v, l]) => (
+          <div key={l}>
+            {v}
+            <small>{l}</small>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const SERVICES: Array<{
+  title: string;
+  body: string;
+  cta: string;
+  subject: string;
+  items: string[];
+}> = [
   {
     title: "Regulatory readiness: e-invoicing",
     body: "The UAE's move to structured electronic invoicing is not an IT upgrade. It reaches into finance operations, master data, supplier relationships and the systems of record beneath them — and it arrives with fixed dates and monthly penalties. We assess exposure, remediate the data, select the accredited provider that fits your architecture, and take you through to a controlled go-live.",
@@ -122,88 +176,35 @@ const capabilities = [
   },
 ];
 
-const faqs = [
-  {
-    q: "Is my company actually in scope for e-invoicing?",
-    a: "Almost certainly, yes. The turnover threshold decides which phase you fall into and therefore your deadline — it does not decide whether the rules apply to you. Business-to-consumer sales are outside the scope for now; business-to-business and business-to-government transactions are not.",
-  },
-  {
-    q: "Do you replace our existing IT provider?",
-    a: "Only if you want us to. A large part of our work sits alongside an incumbent — a readiness assessment, a cloud review, a specific build. Where we do take over an estate, we run a structured handover rather than a cut-over.",
-  },
-  {
-    q: "Who actually does the work?",
-    a: "Our own consultants lead every engagement, supported by vetted delivery partners for specialist and around-the-clock work. Every partner works under our contract, our confidentiality terms and our name. You have one point of accountability throughout.",
-  },
-  {
-    q: "What does the first conversation cost?",
-    a: "Nothing. Tell us your turnover band and what your finance team runs on, and we will tell you on the call which e-invoicing phase you sit in and what has to happen first. No proposal is attached to that answer.",
-  },
+const FAQS: Array<[string, string]> = [
+  [
+    "Is my company actually in scope for e-invoicing?",
+    "Almost certainly, yes. The turnover threshold decides which phase you fall into and therefore your deadline — it does not decide whether the rules apply to you. Business-to-consumer sales are outside the scope for now; business-to-business and business-to-government transactions are not.",
+  ],
+  [
+    "Do you replace our existing IT provider?",
+    "Only if you want us to. A large part of our work sits alongside an incumbent — a readiness assessment, a cloud review, a specific build. Where we do take over an estate, we run a structured handover rather than a cut-over.",
+  ],
+  [
+    "Who actually does the work?",
+    "Our own consultants lead every engagement, supported by vetted delivery partners for specialist and around-the-clock work. Every partner works under our contract, our confidentiality terms and our name. You have one point of accountability throughout.",
+  ],
+  [
+    "What does the first conversation cost?",
+    "Nothing. Tell us your turnover band and what your finance team runs on, and we will tell you on the call which e-invoicing phase you sit in and what has to happen first. No proposal is attached to that answer.",
+  ],
 ];
 
-const pad = (n: number) => (n < 10 ? `0${n}` : `${n}`);
-
-function Countdown({ target }: { target: string }) {
-  const [gap, setGap] = useState<number | null>(null);
-
-  useEffect(() => {
-    const update = () => setGap(new Date(target).getTime() - Date.now());
-    update();
-    const id = setInterval(update, 1000);
-    return () => clearInterval(id);
-  }, [target]);
-
-  if (gap === null) return <div className="digits" />;
-  if (gap < 0)
-    return (
-      <div className="digits">
-        <div style={{ fontSize: 18 }}>Deadline passed</div>
-      </div>
-    );
-
-  const d = Math.floor(gap / 86400000);
-  const h = Math.floor(gap / 3600000) % 24;
-  const m = Math.floor(gap / 60000) % 60;
-  const s = Math.floor(gap / 1000) % 60;
-
-  return (
-    <div className="digits">
-      <div>
-        {d}
-        <small>DAYS</small>
-      </div>
-      <div>
-        {pad(h)}
-        <small>HRS</small>
-      </div>
-      <div>
-        {pad(m)}
-        <small>MIN</small>
-      </div>
-      <div>
-        {pad(s)}
-        <small>SEC</small>
-      </div>
-    </div>
-  );
-}
-
 function Index() {
-  const [solid, setSolid] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setSolid(window.scrollY > 70);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   return (
     <>
-      <header className={`top${solid ? " solid" : ""}`}>
+      <header className="top">
         <div className="wrap">
           <a className="mark" href="#top">
-            Dillon &amp; Bird<span>DIGITAL</span>
+            <img src={dbLogo.url} alt="Dillon & Bird Digital logo" />
+            <span className="mark-text">
+              Dillon &amp; Bird<span>DIGITAL</span>
+            </span>
           </a>
           <nav className="topnav">
             <a href="#services">Capabilities</a>
@@ -215,7 +216,6 @@ function Index() {
           </nav>
         </div>
       </header>
-
       <main id="top">
         <section className="hero">
           <video
@@ -235,12 +235,17 @@ function Index() {
             style={{ ["--hero-poster" as string]: `url('${heroPoster.url}')` }}
           />
           <div className="wrap hero-in">
-            <p className="eyebrow rise">The technology practice of Dillon &amp; Bird Partners</p>
-            <h1 className="rise">We build it, we run it, we stand behind it.</h1>
+            <p className="eyebrow rise">
+              The technology practice of Dillon &amp; Bird Partners
+            </p>
+            <h1 className="rise">
+              We build it, we run it, we stand behind it.
+            </h1>
             <p className="lede rise">
-              We design, build and operate the technology that UAE businesses depend on — regulatory
-              readiness, cloud, applied AI and the operations beneath it all. Then we stay
-              accountable for how it performs.
+              We design, build and operate the technology that UAE businesses
+              depend on — regulatory readiness, cloud, applied AI and the
+              operations beneath it all. Then we stay accountable for how it
+              performs.
             </p>
             <div className="btns rise">
               <a className="btn" href="#contact">
@@ -251,8 +256,9 @@ function Index() {
               </a>
             </div>
             <p className="hero-trust rise">
-              Dillon and Bird Partners LLC-FZ &nbsp;·&nbsp; BurJuman Towers, Dubai &nbsp;·&nbsp;
-              Management consultancy, corporate services, restructuring, audits and risk advisory
+              Dillon and Bird Partners LLC-FZ &nbsp;·&nbsp; BurJuman Towers,
+              Dubai &nbsp;·&nbsp; Management consultancy, corporate services,
+              restructuring, audits and risk advisory
             </p>
           </div>
         </section>
@@ -261,15 +267,23 @@ function Index() {
           <div className="wrap">
             <div>
               <b>30+</b>
-              <p>Consultants and advisors across strategy, finance and technology</p>
+              <p>
+                Consultants and advisors across strategy, finance and technology
+              </p>
             </div>
             <div>
               <b>2027</b>
-              <p>The year UAE e-invoicing becomes mandatory for every business in scope</p>
+              <p>
+                The year UAE e-invoicing becomes mandatory for every business in
+                scope
+              </p>
             </div>
             <div>
               <b>One firm</b>
-              <p>Technology, tax, audit and restructuring under a single roof in Dubai</p>
+              <p>
+                Technology, tax, audit and restructuring under a single roof in
+                Dubai
+              </p>
             </div>
           </div>
         </section>
@@ -277,18 +291,18 @@ function Index() {
         <section className="strip">
           <div className="wrap">
             <p className="note">
-              The regulatory clock is already running. Time left to appoint an accredited
-              e-invoicing provider.
+              The regulatory clock is already running. Time left to appoint an
+              accredited e-invoicing provider.
             </p>
             <div className="clocks">
-              <div className="tier">
-                <p className="lbl">Turnover AED 50m and above — 31 Oct 2026</p>
-                <Countdown target="2026-10-31T23:59:59+04:00" />
-              </div>
-              <div className="tier">
-                <p className="lbl">Below AED 50m — 31 Mar 2027</p>
-                <Countdown target="2027-03-31T23:59:59+04:00" />
-              </div>
+              <Tier
+                label="Turnover AED 50m and above — 31 Oct 2026"
+                target="2026-10-31T00:00:00+04:00"
+              />
+              <Tier
+                label="Below AED 50m — 31 Mar 2027"
+                target="2027-03-31T00:00:00+04:00"
+              />
             </div>
           </div>
         </section>
@@ -300,26 +314,25 @@ function Index() {
               <h2>Eight practices, one delivery team.</h2>
               <p>We take on the work others hand back as a recommendation.</p>
             </div>
-
-            {capabilities.map((cap, i) => (
-              <article className={`row${i % 2 === 1 ? " flip" : ""}`} key={cap.title}>
+            {SERVICES.map((s, i) => (
+              <article className={`row${i % 2 === 1 ? " flip" : ""}`} key={s.title}>
                 <div className="rowtext">
-                  <h3>{cap.title}</h3>
-                  <p className="body">{cap.body}</p>
+                  <h3>{s.title}</h3>
+                  <p className="body">{s.body}</p>
                   <div className="cta">
                     <a
                       className="btn btn-line"
-                      href={`mailto:consulting@dillonbird.com?subject=${encodeURIComponent(cap.subject)}`}
+                      href={`mailto:consulting@dillonbird.com?subject=${encodeURIComponent(s.subject)}`}
                     >
-                      {cap.cta}
+                      {s.cta}
                     </a>
                   </div>
                 </div>
                 <div className="panel">
                   <h4>How we deliver</h4>
                   <ul>
-                    {cap.items.map((item) => (
-                      <li key={item}>{item}</li>
+                    {s.items.map((it) => (
+                      <li key={it}>{it}</li>
                     ))}
                   </ul>
                 </div>
@@ -336,25 +349,27 @@ function Index() {
               <div className="why-item">
                 <h3>We are licensed here</h3>
                 <p>
-                  A registered UAE entity with a physical office in BurJuman Towers and named
-                  partners who sign the engagement. If something goes wrong, there is somebody in
-                  this city to hold to it.
+                  A registered UAE entity with a physical office in BurJuman
+                  Towers and named partners who sign the engagement. If
+                  something goes wrong, there is somebody in this city to hold
+                  to it.
                 </p>
               </div>
               <div className="why-item">
                 <h3>Finance and technology together</h3>
                 <p>
-                  E-invoicing is not a software problem or an accounting problem. It is both. Our
-                  technology team sits alongside the people who already handle books, tax and audit
-                  for UAE businesses.
+                  E-invoicing is not a software problem or an accounting
+                  problem. It is both. Our technology team sits alongside the
+                  people who already handle books, tax and audit for UAE
+                  businesses.
                 </p>
               </div>
               <div className="why-item">
                 <h3>We stay after go-live</h3>
                 <p>
-                  Most of our work is delivered under monthly agreements rather than one-off
-                  projects. We are still there when the certificate expires, the server fills up or
-                  a member of staff leaves.
+                  Most of our work is delivered under monthly agreements rather
+                  than one-off projects. We are still there when the certificate
+                  expires, the server fills up or a member of staff leaves.
                 </p>
               </div>
             </div>
@@ -373,27 +388,29 @@ function Index() {
                 <b>Diagnostic</b>
                 <h3>Understand the position</h3>
                 <p>
-                  Half a day with your team produces a written assessment: regulatory exposure,
-                  security posture, licensing waste and continuity risk. The findings are yours
-                  whether or not you engage us further.
+                  Half a day with your team produces a written assessment:
+                  regulatory exposure, security posture, licensing waste and
+                  continuity risk. The findings are yours whether or not you
+                  engage us further.
                 </p>
               </div>
               <div className="step">
                 <b>Delivery</b>
                 <h3>Fix what carries risk</h3>
                 <p>
-                  Each workstream is scoped and priced independently. You choose the sequence, and
-                  nothing begins without an agreed number. Most organisations start with regulatory
-                  readiness and continuity.
+                  Each workstream is scoped and priced independently. You choose
+                  the sequence, and nothing begins without an agreed number.
+                  Most organisations start with regulatory readiness and
+                  continuity.
                 </p>
               </div>
               <div className="step">
                 <b>Run</b>
                 <h3>Hold the gains</h3>
                 <p>
-                  We operate what we build under a monthly agreement — monitoring, patching, backup
-                  and support — so capability compounds instead of decaying. Thirty days' notice,
-                  always.
+                  We operate what we build under a monthly agreement —
+                  monitoring, patching, backup and support — so capability
+                  compounds instead of decaying. Thirty days' notice, always.
                 </p>
               </div>
             </div>
@@ -407,10 +424,10 @@ function Index() {
               <h2>Before you call.</h2>
             </div>
             <div className="faq-list">
-              {faqs.map((f) => (
-                <details key={f.q}>
-                  <summary>{f.q}</summary>
-                  <p className="ans">{f.a}</p>
+              {FAQS.map(([q, a]) => (
+                <details key={q}>
+                  <summary>{q}</summary>
+                  <p className="ans">{a}</p>
                 </details>
               ))}
             </div>
@@ -424,11 +441,13 @@ function Index() {
             </div>
             <div>
               <p>
-                We are the technology practice of Dillon and Bird Partners LLC-FZ, a Dubai
-                consultancy operating across the full corporate lifecycle. That matters more than it
-                sounds. The team modernising your systems sits alongside the team handling your
-                accounts, your tax position and your audit — and the regulatory work now landing on
-                UAE businesses sits precisely where finance and technology meet.
+                We are the technology practice of Dillon and Bird Partners
+                LLC-FZ, a Dubai consultancy operating across the full corporate
+                lifecycle. That matters more than it sounds. The team
+                modernising your systems sits alongside the team handling your
+                accounts, your tax position and your audit — and the regulatory
+                work now landing on UAE businesses sits precisely where finance
+                and technology meet.
               </p>
               <ul>
                 <li>Management consultancy</li>
@@ -445,8 +464,9 @@ function Index() {
           <div className="wrap">
             <h2>Begin with one question.</h2>
             <p className="lede">
-              Which e-invoicing phase does my organisation fall into, and what has to happen first?
-              We will answer it on the call, at no cost and with no proposal attached.
+              Which e-invoicing phase does my organisation fall into, and what
+              has to happen first? We will answer it on the call, at no cost and
+              with no proposal attached.
             </p>
             <a className="btn" href="tel:+971585570593">
               Call +971 58 557 0593
@@ -458,7 +478,9 @@ function Index() {
               </div>
               <div>
                 <h3>Email</h3>
-                <a href="mailto:consulting@dillonbird.com">consulting@dillonbird.com</a>
+                <a href="mailto:consulting@dillonbird.com">
+                  consulting@dillonbird.com
+                </a>
               </div>
               <div>
                 <h3>Office</h3>
@@ -472,7 +494,6 @@ function Index() {
           </div>
         </section>
       </main>
-
       <footer>
         <div className="wrap">
           <div className="foot-top">
@@ -481,8 +502,9 @@ function Index() {
                 Dillon &amp; Bird<span>DIGITAL</span>
               </span>
               <p>
-                The technology practice of Dillon and Bird Partners LLC-FZ, a licensed management
-                consultancy based in Dubai, United Arab Emirates.
+                The technology practice of Dillon and Bird Partners LLC-FZ, a
+                licensed management consultancy based in Dubai, United Arab
+                Emirates.
               </p>
             </div>
             <div>
