@@ -3,9 +3,8 @@ import { useEffect, useState } from "react";
 import heroVideo from "@/assets/hero.mp4.asset.json";
 import heroPoster from "@/assets/hero-poster.jpg.asset.json";
 
-const TITLE = "Dillon & Bird Digital — technology, cloud and AI consulting in Dubai";
-const DESCRIPTION =
-  "The technology practice of Dillon and Bird Partners LLC-FZ, Dubai. E-invoicing readiness, cloud, applied AI, managed operations, websites, hosting, digital marketing and CRM.";
+const TITLE = "Dillon & Bird Digital";
+const DESCRIPTION = "Technology, AI, cloud and digital transformation solutions for UAE businesses.";
 
 export const Route = createFileRoute("/")({
   head: () => ({
